@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:news_epi/details.dart';
+import 'package:news_epi/model.dart';
+
+import 'widgets.dart';
 
 void main() {
   runApp(MyApp());
@@ -63,16 +66,18 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: ListView.builder(
-        itemCount: 10,
+        itemCount: 100,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: NewsCard(
-              title: 'Article Title',
-              description: 'This is a description of the article.',
-              articleUrl: '',
-              imageUrl:
-                  'https://api.time.com/wp-content/uploads/2015/02/cats.jpg?quality=85&w=1024&h=512&crop=1',
+              newsModel: NewsModel(
+                title: 'Article Title',
+                description: 'This is a description of the article.',
+                url: '',
+                imgUrl:
+                    'https://api.time.com/wp-content/uploads/2015/02/cats.jpg?quality=85&w=1024&h=512&crop=1',
+              ),
             ),
           );
         },
@@ -81,74 +86,6 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-class NewsCard extends StatelessWidget {
-  final String title;
-  final String description;
-  final String imageUrl;
-  final String articleUrl;
-
-  NewsCard({this.title, this.articleUrl, this.description, this.imageUrl});
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) {
-              return NewsDetails(
-                description: description,
-                title: title,
-                imageUrl: imageUrl,
-              );
-            },
-          ),
-        );
-      },
-      child: Card(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Stack(
-              children: [
-                Image.network(imageUrl),
-                Positioned(
-                  bottom: 12,
-                  left: 12,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(25),
-                    child: Container(
-                      padding: EdgeInsets.all(5),
-                      color: Colors.pink,
-                      child: Text(
-                        title,
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.all(5),
-              child: Text(
-                description,
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  fontSize: 18,
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
