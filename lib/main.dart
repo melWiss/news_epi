@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:news_epi/details.dart';
 import 'package:news_epi/model.dart';
 
 import 'widgets.dart';
