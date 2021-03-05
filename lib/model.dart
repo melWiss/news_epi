@@ -10,7 +10,7 @@ class NewsModel {
     this.url = map['url'];
     this.description = map['description'];
     this.title = map['title'];
-    this.imgUrl = map['imgUrl'];
+    this.imgUrl = map['urlToImage'];
   }
 
   Map<String, dynamic> toMap() {
@@ -18,7 +18,7 @@ class NewsModel {
       'title': this.title,
       'description': this.description,
       'url': this.url,
-      'imgUrl': this.imgUrl,
+      'urlToImage': this.imgUrl,
     };
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:news_epi/api.dart';
 import 'package:news_epi/model.dart';
 
 import 'widgets.dart';
@@ -40,6 +41,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -64,20 +70,33 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.save), label: "Saved"),
         ],
       ),
-      body: ListView.builder(
-        itemCount: 100,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: NewsCard(
-              newsModel: NewsModel(
-                title: 'Article Title',
-                description: 'This is a description of the article.',
-                url: '',
-                imgUrl:
-                    'https://api.time.com/wp-content/uploads/2015/02/cats.jpg?quality=85&w=1024&h=512&crop=1',
-              ),
-            ),
+      body: FutureBuilder<List<NewsModel>>(
+        future: getNews(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: NewsCard(
+                    newsModel: NewsModel(
+                      title: snapshot.data[index].title,
+                      description: snapshot.data[index].description,
+                      url: snapshot.data[index].url,
+                      imgUrl: snapshot.data[index].imgUrl,
+                    ),
+                  ),
+                );
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          }
+          return Center(
+            child: CircularProgressIndicator(),
           );
         },
       ),
