@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:news_epi/api.dart';
 import 'package:news_epi/model.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'widgets.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  FirebaseAuth auth = FirebaseAuth.instance;
+  GoogleAuthProvider googleProvider = GoogleAuthProvider();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,7 +23,46 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: FutureBuilder(
+        // Initialize FlutterFire:
+        future: _initialization,
+        builder: (context, snapshot) {
+          // Check for errors
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error),
+            );
+          }
+
+          // Once complete, show your application
+          if (snapshot.connectionState == ConnectionState.done) {
+            return StreamBuilder(
+                stream: auth.authStateChanges(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError)
+                    return Center(
+                      child: Text(snapshot.error),
+                    );
+                  else if (snapshot.hasData) return MyHomePage();
+                  return Scaffold(
+                    body: Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          FirebaseAuth.instance.signInWithPopup(googleProvider);
+                        },
+                        child: Text("Sign in with google"),
+                      ),
+                    ),
+                  );
+                });
+          }
+
+          // Otherwise, show something whilst waiting for initialization to complete
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
     );
   }
 }
